@@ -18,3 +18,7 @@ requests==2.31.0
 
 # Utilities
 Werkzeug==2.3.7
+
+# Mac app packaging
+pywebview==4.4.1
+py2app==0.28.8

@@ -75,9 +75,11 @@ def generate_caption(transcription):
 
         # Extract the assistant's message
         assistant_message = message.content[0].text
+        logger.info(f"Raw Claude response:\n{assistant_message}")
 
         # Parse the response to extract the different sections
         sections = parse_claude_response(assistant_message)
+        logger.info(f"Parsed sections: {sections}")
 
         logger.info("Caption generated successfully")
         return sections
@@ -131,9 +133,19 @@ def parse_claude_response(response_text):
             if sections["formatted_caption"]:
                 sections["formatted_caption"] += "\n"
             sections["formatted_caption"] += line
-        elif current_section == "missing_information" and line.startswith("-"):
-            sections["missing_information"].append(line[1:].strip())
-        elif current_section == "follow_up_questions" and line.startswith("-"):
-            sections["follow_up_questions"].append(line[1:].strip())
+        elif current_section == "missing_information":
+            # Handle both dash-prefixed and numbered list items
+            if line.startswith("-"):
+                sections["missing_information"].append(line[1:].strip())
+            elif line[0].isdigit() and "." in line:
+                # Handle numbered items like "1. item"
+                sections["missing_information"].append(line.split(".", 1)[1].strip())
+        elif current_section == "follow_up_questions":
+            # Handle both dash-prefixed and numbered list items
+            if line.startswith("-"):
+                sections["follow_up_questions"].append(line[1:].strip())
+            elif line[0].isdigit() and "." in line:
+                # Handle numbered items like "1. question"
+                sections["follow_up_questions"].append(line.split(".", 1)[1].strip())
 
     return sections

@@ -71,6 +71,8 @@ reuters-caption-generator/
 │       ├── fonts/          # Clario font family
 │       └── favicon.ico     # Thomson Reuters favicon
 │
+├── launcher.py             # Python launcher script
+├── start.command           # macOS: Double-click launcher (auto-closes Terminal)
 └── README.md               # This file
 ```
 
@@ -144,7 +146,18 @@ LOG_LEVEL=INFO
 
 ## Running the Application
 
-### Start the Server
+### macOS: Easy Launch (Recommended)
+
+**Simply double-click `start.command`** in the project folder!
+
+- ✅ Terminal opens briefly then auto-closes
+- ✅ App launches in your default browser
+- ✅ Full microphone access enabled
+- ✅ Server runs in background
+
+**Optional:** Drag `start.command` to your Dock for one-click access.
+
+### Manual Start (All Platforms)
 
 ```bash
 cd backend
@@ -157,11 +170,7 @@ Starting Reuters Caption Generator on port 8000
 * Running on http://127.0.0.1:8000
 ```
 
-### Access the Application
-
-Open your browser to: **http://localhost:8000**
-
-The Thomson Reuters-branded wizard interface will appear.
+Then open your browser to: **http://localhost:8000**
 
 ## Usage Guide
 
@@ -282,7 +291,8 @@ Round 3: "Original recording + Additional details: A + B"
 ### Caption Generation Issues
 - **403 Forbidden**: Check API key, VPN connection
 - **Slow generation**: LiteLLM instance may be under load
-- **Markdown in output**: Refresh page and try again (prompt now prevents this)
+- **Server Error 500**: Port conflict - restart using `start.command` (auto-kills old servers)
+- **Missing information not showing**: Hard refresh browser (Cmd+Shift+R)
 
 ### Styling Issues
 - **Logo not loading**: Check `frontend/public/images/` directory

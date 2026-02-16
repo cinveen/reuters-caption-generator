@@ -187,6 +187,10 @@ async function generateCaption() {
 }
 
 function displayCaption(data) {
+    console.log('displayCaption received:', data);
+    console.log('missing_information:', data.missing_information);
+    console.log('missing_information length:', data.missing_information ? data.missing_information.length : 'undefined');
+
     formattedCaption.value = data.formatted_caption || 'Could not generate caption.';
 
     // Handle missing information
