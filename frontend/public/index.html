@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reuters Caption Generator</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Reuters Logo Header -->
+    <div class="tr-header">
+        <img src="images/tr_pri_logo_rgb_color.png" alt="Thomson Reuters" class="tr-logo">
+    </div>
+
+    <div class="app-container">
+
+        <!-- Step 1: Recording -->
+        <section id="stepRecord" class="step active">
+            <div class="step-content">
+                <h1 class="step-title">Describe your photo</h1>
+                <p class="step-subtitle">Speak naturally - include who, what, where, when</p>
+
+                <div class="action-zone">
+                    <button id="recordButton" class="btn-primary btn-large">
+                        <i class="fas fa-microphone"></i>
+                        <span>Start Recording</span>
+                    </button>
+
+                    <button id="stopButton" class="btn-danger btn-large hidden">
+                        <i class="fas fa-stop"></i>
+                        <span>Stop Recording</span>
+                    </button>
+
+                    <div id="recordingStatus" class="status-text"></div>
+                </div>
+
+                <audio id="audioPlayback" class="audio-player hidden"></audio>
+            </div>
+        </section>
+
+        <!-- Step 2: Generate -->
+        <section id="stepGenerate" class="step">
+            <div class="step-content">
+                <h2 class="step-title">Got it</h2>
+                <p class="step-subtitle" id="transcriptionPreview"></p>
+
+                <div class="action-zone">
+                    <button id="generateButton" class="btn-primary btn-large">
+                        <i class="fas fa-magic"></i>
+                        <span>Generate Reuters Caption</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Result -->
+        <section id="stepResult" class="step">
+            <div class="step-content">
+                <h2 class="step-title">Your Caption</h2>
+
+                <div class="caption-display">
+                    <textarea id="formattedCaption" class="caption-text" readonly></textarea>
+                </div>
+
+                <div id="missingInfoAlert" class="alert-box hidden">
+                    <div class="alert-content">
+                        <strong>Missing Information:</strong>
+                        <ul id="missingInfoList" class="missing-list"></ul>
+                    </div>
+                </div>
+
+                <div class="action-zone action-zone-split">
+                    <button id="copyButton" class="btn-secondary btn-large">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Caption</span>
+                    </button>
+
+                    <button id="addInfoButton" class="btn-outline btn-large">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Missing Info</span>
+                    </button>
+                </div>
+
+                <button id="startOverButton" class="btn-text">
+                    <i class="fas fa-redo"></i>
+                    Start Over
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 4: Add Details -->
+        <section id="stepAddDetails" class="step">
+            <div class="step-content">
+                <h2 class="step-title">Add Missing Details</h2>
+
+                <div id="missingInfoReminder" class="info-box"></div>
+
+                <div class="action-zone">
+                    <button id="recordAdditionalButton" class="btn-primary btn-medium">
+                        <i class="fas fa-microphone"></i>
+                        <span>Record Details</span>
+                    </button>
+
+                    <button id="stopAdditionalButton" class="btn-danger btn-medium hidden">
+                        <i class="fas fa-stop"></i>
+                        <span>Stop</span>
+                    </button>
+
+                    <div id="additionalRecordingStatus" class="status-text"></div>
+                </div>
+
+                <audio id="additionalAudioPlayback" class="audio-player hidden"></audio>
+
+                <div class="divider">
+                    <span>or type below</span>
+                </div>
+
+                <textarea id="additionalDetails" class="details-input" placeholder="Type additional information here..."></textarea>
+
+                <div class="action-zone action-zone-split">
+                    <button id="updateButton" class="btn-primary btn-large">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Update Caption</span>
+                    </button>
+
+                    <button id="cancelAddButton" class="btn-outline btn-large">
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loadingMessage">Processing...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
