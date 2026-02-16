@@ -4,13 +4,17 @@ cd "$(dirname "$0")"
 # Kill any existing Flask servers to prevent conflicts
 lsof -ti:8000 | xargs kill -9 2>/dev/null
 
-# Start the app in background
-python3 launcher.py > /dev/null 2>&1 &
+echo "🚀 Starting Reuters Caption Generator..."
+echo ""
+echo "App window will open shortly..."
+echo "When you close the app window, this Terminal will close automatically."
+echo ""
 
-# Wait for server to start
-sleep 3
+# Start the app with pywebview
+# When you close the app window, everything stops cleanly!
+python3 launcher.py
 
-# Close this Terminal window
-osascript -e 'tell application "Terminal" to close first window' &
-
+# When window closes, we get here
+echo ""
+echo "✅ App closed successfully."
 exit

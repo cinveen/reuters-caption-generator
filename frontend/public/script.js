@@ -69,11 +69,9 @@ function init() {
         }
     });
 
-    // Check browser support
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showToast('⚠️ Audio recording not supported in this browser');
-        recordButton.disabled = true;
-    }
+    // Note: We're now using native Python audio recording via pywebview.api
+    // No browser MediaRecorder needed!
+    console.log('Reuters Caption Generator initialized with native audio recording');
 }
 
 // Step Navigation
@@ -83,19 +81,17 @@ function showStep(stepId) {
     document.getElementById(stepId).classList.add('active');
 }
 
-// Recording Functions
+// Recording Functions - Using Native Python API
 async function startRecording() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
+        console.log('Starting native recording via Python...');
 
-        mediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) audioChunks.push(e.data);
-        };
+        // Call Python function via pywebview API bridge
+        const result = await pywebview.api.start_recording();
 
-        mediaRecorder.onstop = processRecording;
-        mediaRecorder.start();
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to start recording');
+        }
 
         recordButton.classList.add('hidden');
         stopButton.classList.remove('hidden');
@@ -105,44 +101,28 @@ async function startRecording() {
 
     } catch (error) {
         showToast(`⚠️ ${error.message}`);
+        console.error('Recording error:', error);
     }
 }
 
-function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-
+async function stopRecording() {
+    try {
         stopButton.classList.add('hidden');
         recordingStatus.textContent = 'Processing...';
         recordingStatus.classList.remove('recording');
-
         showLoading('Transcribing...');
-    }
-}
 
-function processRecording() {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-    audioPlayback.src = URL.createObjectURL(audioBlob);
-    audioPlayback.classList.remove('hidden');
+        console.log('Stopping recording and transcribing...');
 
-    uploadAudio(audioBlob);
-}
+        // Call Python function - it records, stops, and transcribes all in one!
+        const result = await pywebview.api.stop_recording();
 
-async function uploadAudio(blob) {
-    try {
-        const formData = new FormData();
-        formData.append('audio_blob', blob);
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to process recording');
+        }
 
-        const response = await fetch(API_UPLOAD_AUDIO, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
-        const data = await response.json();
-        currentTranscription = data.transcription;
+        // Set the transcription
+        currentTranscription = result.transcription;
         transcriptionPreview.textContent = `"${truncate(currentTranscription, 150)}..."`;
 
         hideLoading();
@@ -155,6 +135,7 @@ async function uploadAudio(blob) {
         showToast(`⚠️ Error: ${error.message}`);
         recordButton.classList.remove('hidden');
         recordingStatus.textContent = '';
+        console.error('Stop recording error:', error);
     }
 }
 
@@ -210,19 +191,16 @@ function displayCaption(data) {
     }
 }
 
-// Additional Details Recording
+// Additional Details Recording - Using Native Python API
 async function startAdditionalRecording() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        additionalMediaRecorder = new MediaRecorder(stream);
-        additionalAudioChunks = [];
+        console.log('Starting additional recording via Python...');
 
-        additionalMediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) additionalAudioChunks.push(e.data);
-        };
+        const result = await pywebview.api.start_recording();
 
-        additionalMediaRecorder.onstop = processAdditionalRecording;
-        additionalMediaRecorder.start();
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to start recording');
+        }
 
         recordAdditionalButton.classList.add('hidden');
         stopAdditionalButton.classList.remove('hidden');
@@ -231,48 +209,29 @@ async function startAdditionalRecording() {
 
     } catch (error) {
         showToast(`⚠️ ${error.message}`);
+        console.error('Additional recording error:', error);
     }
 }
 
-function stopAdditionalRecording() {
-    if (additionalMediaRecorder && additionalMediaRecorder.state !== 'inactive') {
-        additionalMediaRecorder.stop();
-        additionalMediaRecorder.stream.getTracks().forEach(track => track.stop());
-
+async function stopAdditionalRecording() {
+    try {
         stopAdditionalButton.classList.add('hidden');
         additionalRecordingStatus.textContent = 'Processing...';
         additionalRecordingStatus.classList.remove('recording');
-
         showLoading('Transcribing...');
-    }
-}
 
-function processAdditionalRecording() {
-    const audioBlob = new Blob(additionalAudioChunks, { type: 'audio/wav' });
-    additionalAudioPlayback.src = URL.createObjectURL(audioBlob);
-    additionalAudioPlayback.classList.remove('hidden');
+        console.log('Stopping additional recording and transcribing...');
 
-    uploadAdditionalAudio(audioBlob);
-}
+        const result = await pywebview.api.stop_recording();
 
-async function uploadAdditionalAudio(blob) {
-    try {
-        const formData = new FormData();
-        formData.append('audio_blob', blob);
-
-        const response = await fetch(API_UPLOAD_AUDIO, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
-        const data = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to process recording');
+        }
 
         const existing = additionalDetails.value.trim();
         additionalDetails.value = existing
-            ? `${existing}\n\n${data.transcription}`
-            : data.transcription;
+            ? `${existing}\n\n${result.transcription}`
+            : result.transcription;
 
         updateButton.disabled = false;
         recordAdditionalButton.classList.remove('hidden');
@@ -284,6 +243,7 @@ async function uploadAdditionalAudio(blob) {
         showToast(`⚠️ Error: ${error.message}`);
         recordAdditionalButton.classList.remove('hidden');
         additionalRecordingStatus.textContent = '';
+        console.error('Stop additional recording error:', error);
     }
 }
 
