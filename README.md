@@ -1,12 +1,18 @@
 # Reuters Photo Caption Generator
 
-A streamlined web application designed for Reuters photographers to generate properly formatted photo captions through voice input. Features a simplified wizard interface with full Thomson Reuters branding, powered by OpenAI Whisper for transcription and Claude Sonnet 4.5 for intelligent caption generation.
+A native desktop application designed for Reuters photographers to generate properly formatted photo captions through voice input. Features a simplified wizard interface with full Thomson Reuters branding, powered by OpenAI Whisper Large for transcription and Claude Sonnet 4.5 for intelligent caption generation.
 
 ## Overview
 
-Built specifically for photographers who need fast, accurate caption generation in the field. The app uses a step-by-step wizard design that guides users through recording, generation, and refinement without overwhelming them with technical details.
+Built specifically for photographers who need fast, accurate caption generation in the field. The app uses a native window (no browser required) with a step-by-step wizard design that guides users through recording, generation, and refinement without overwhelming them with technical details.
 
 ## Key Features
+
+### Native Desktop Application
+- **No browser required**: Runs in a native window using pywebview
+- **Clean lifecycle**: Close window = everything shuts down automatically
+- **Python audio recording**: Native microphone access via sounddevice
+- **Cross-platform**: Works on macOS, Windows, and Linux
 
 ### Simplified Wizard Interface
 - **One step at a time**: Progressive disclosure design shows only what's relevant
@@ -15,8 +21,8 @@ Built specifically for photographers who need fast, accurate caption generation 
 - **Clean, minimal UI**: No clutter, no boxes-within-boxes - just the next action
 
 ### AI-Powered Intelligence
-- **Whisper transcription**: Fast, accurate local transcription (no internet delays)
-- **Claude Sonnet 4.5**: Reuters-style formatting with context awareness
+- **Whisper Large**: Most accurate transcription model, excellent for accents (~1.5GB)
+- **Claude Sonnet 4.5**: Reuters-style formatting with comprehensive style guide
 - **Smart detection**: Identifies missing information automatically
 - **Plain text output**: No markdown artifacts, ready to copy-paste
 
@@ -24,8 +30,14 @@ Built specifically for photographers who need fast, accurate caption generation 
 - **Official logo**: Sticky header with TR branding
 - **Clario font family**: Professional Reuters typography
 - **Brand colors**: TR Orange (#D64000), Racing Green (#123015)
-- **Consistent styling**: Clean white backgrounds with color accents
-- **Mobile responsive**: Works seamlessly on phones and tablets
+- **Random backgrounds**: 9 professional Reuters photos rotate on each launch
+- **Mobile responsive**: Clean, modern design
+
+### Comprehensive Reuters Style Guide
+- **Detailed requirements**: Core principles, caption structure, writing style
+- **Real examples**: Multiple Reuters caption examples with proper formatting
+- **Forbidden phrases**: Explicit guidance on avoiding "is seen", "poses", etc.
+- **Special situations**: Conflict coverage, third-party images, controlled access
 
 ## User Experience Flow
 
@@ -55,122 +67,128 @@ Built specifically for photographers who need fast, accurate caption generation 
 ```
 reuters-caption-generator/
 ├── backend/
-│   ├── app.py              # Flask application with static file serving
-│   ├── whisper_service.py  # Local Whisper transcription
-│   ├── claude_service.py   # Claude/LiteLLM integration (Anthropic SDK)
+│   ├── app.py              # Flask application
+│   ├── whisper_service.py  # Whisper Large transcription
+│   ├── claude_service.py   # Claude/LiteLLM integration
+│   ├── audio_recorder.py   # Native audio recording
 │   ├── requirements.txt    # Python dependencies
-│   ├── .env                # Environment configuration (API keys)
-│   └── uploads/            # Temporary audio files (auto-created)
+│   └── .env                # Environment configuration (API keys)
 │
 ├── frontend/
 │   └── public/
 │       ├── index.html      # Simplified wizard UI
-│       ├── style.css       # Thomson Reuters branding & styling
+│       ├── style.css       # TR branding & styling
 │       ├── script.js       # State management & API calls
-│       ├── images/         # TR logos
+│       ├── images/
+│       │   ├── tr_pri_logo_rgb_color.png
+│       │   └── backgrounds/  # 9 Reuters background photos
 │       ├── fonts/          # Clario font family
 │       └── favicon.ico     # Thomson Reuters favicon
 │
-├── launcher.py             # Python launcher script
-├── start.command           # macOS: Double-click launcher (auto-closes Terminal)
+├── setup-mac/              # macOS setup and launcher
+│   ├── setup.command       # One-time setup (double-click)
+│   ├── start.command       # App launcher (double-click)
+│   └── SETUP_INSTRUCTIONS_MAC.md
+│
+├── setup-windows/          # Windows setup and launcher
+│   ├── setup.bat           # One-time setup (double-click)
+│   ├── start.bat           # App launcher (double-click)
+│   └── SETUP_INSTRUCTIONS_WINDOWS.md
+│
+├── launcher.py             # Python launcher with pywebview
+├── setup.py                # py2app config (for future Electron packaging)
+├── START_HERE.md           # First file users see
+├── HOW_TO_SHARE.md         # Guide for sharing with colleagues
 └── README.md               # This file
 ```
 
+## Quick Start
+
+### For End Users (Photographers)
+
+1. **Extract the folder** you received
+2. **Open `START_HERE.md`** and follow the instructions for your OS
+3. **macOS users**: Go to `setup-mac/` folder
+4. **Windows users**: Go to `setup-windows/` folder
+5. **Double-click setup** script (one-time, 5-10 minutes)
+6. **Double-click start** script to use the app!
+
+### For Developers
+
+See the **Installation** section below.
+
 ## Prerequisites
 
-- **Python 3.8+** (tested on 3.9.6)
+- **Python 3.8+** (tested on 3.9+)
 - **pip** (Python package manager)
-- **FFmpeg** (required for Whisper audio processing)
-- **Modern browser** (Chrome, Firefox, Edge, Safari)
+- **~2GB disk space** (for Whisper Large model and dependencies)
 
-## Installation
+## Installation (For Developers)
 
-### 1. Install FFmpeg
+### Quick Setup (Recommended)
 
-FFmpeg is required for Whisper to process audio files.
-
-**macOS (Homebrew):**
+**macOS:**
 ```bash
-brew install ffmpeg
+cd setup-mac
+bash setup.command
 ```
 
-**Ubuntu/Debian:**
+**Windows:**
 ```bash
-sudo apt update && sudo apt install ffmpeg
+cd setup-windows
+setup.bat
 ```
 
-**Windows (Chocolatey):**
+This installs all dependencies and downloads the Whisper Large model.
+
+### Manual Installation
+
+1. **Install Python dependencies:**
 ```bash
-choco install ffmpeg
+pip install -r backend/requirements.txt
 ```
 
-Or download from [ffmpeg.org](https://ffmpeg.org/download.html)
-
-### 2. Install Python Dependencies
-
+2. **Download Whisper Large model:**
 ```bash
-cd backend
-pip install -r requirements.txt
-pip install openai-whisper anthropic
+python -c "import whisper; whisper.load_model('large')"
 ```
 
-**What gets installed:**
-- Flask & Flask-CORS (web framework)
-- OpenAI Whisper (audio transcription)
-- PyTorch (~2GB, required by Whisper)
-- Anthropic SDK (Claude API client)
-- LiteLLM (API management)
-- Supporting packages (numpy, etc.)
+3. **Configure API access:**
 
-**Installation time:** 5-10 minutes (mostly PyTorch download)
-
-### 3. Configure API Access
-
-Create or update the `.env` file in the `backend/` directory:
-
-```bash
-cd backend
-cp .env.example .env  # if .env doesn't exist
-```
-
-Edit `.env`:
+Create `backend/.env`:
 ```
 LITELLM_API_KEY=your_api_key_here
 LITELLM_API_URL=https://litellm.int.thomsonreuters.com
-WHISPER_MODEL=base
+WHISPER_MODEL=large
 PORT=8000
 LOG_LEVEL=INFO
 ```
 
-**Note:** You must have access to the Thomson Reuters internal LiteLLM instance and be on the appropriate VPN.
+**Note:** You must have access to Thomson Reuters internal LiteLLM instance.
 
 ## Running the Application
 
-### macOS: Easy Launch (Recommended)
+### Easy Launch
 
-**Simply double-click `start.command`** in the project folder!
+**macOS:**
+```bash
+# From setup-mac/ folder
+./start.command
+```
 
-- ✅ Terminal opens briefly then auto-closes
-- ✅ App launches in your default browser
-- ✅ Full microphone access enabled
-- ✅ Server runs in background
+**Windows:**
+```bash
+# From setup-windows/ folder
+start.bat
+```
 
-**Optional:** Drag `start.command` to your Dock for one-click access.
+A native window opens with the app. Close the window to shut everything down.
 
-### Manual Start (All Platforms)
+### Manual Launch
 
 ```bash
-cd backend
-python app.py
+python launcher.py
 ```
-
-You should see:
-```
-Starting Reuters Caption Generator on port 8000
-* Running on http://127.0.0.1:8000
-```
-
-Then open your browser to: **http://localhost:8000**
 
 ## Usage Guide
 
@@ -185,89 +203,74 @@ Then open your browser to: **http://localhost:8000**
   - When it was taken (date, time context)
   - Why it's newsworthy (context, significance)
 - Click "Stop Recording" when finished
-- Audio plays back automatically for verification
 
 **Step 2: Generate Caption**
-- Review the transcription preview (truncated)
+- Review the transcription preview
 - Click "Generate Reuters Caption"
-- Claude analyzes the description and formats it
+- Claude analyzes and formats using comprehensive Reuters style guide
 
 **Step 3: Review & Copy**
 - Your formatted caption appears
-- If information is missing, it's highlighted in an orange-bordered box
+- Missing information is highlighted
 - Click "Copy Caption" to copy to clipboard
-- Click "Start Over" to begin a new caption
 - Or click "Add Missing Info" to refine...
 
 **Step 4: Refine (Optional, Repeatable)**
-- Choose to record OR type additional details
-- Click "Record Details" for voice input, or just type in the box
-- Click "Update Caption" to regenerate
-- The new caption builds on ALL previous information
-- Repeat as many times as needed until perfect
+- Record OR type additional details
+- Click "Update Caption"
+- New caption builds on ALL previous information
+- Repeat until perfect
 
 ### Best Practices
 
 **Speak clearly and include:**
-- Full names with correct spelling (spell unusual names)
+- Full names with correct spelling
 - Specific dates (not "yesterday" but "February 16, 2026")
 - Exact locations (not "downtown" but "Times Square, New York")
 - Context that makes it newsworthy
-- Any relevant background information
+- Credit line photographer name
 
 **Recording tips:**
 - Minimize background noise
-- Speak at normal pace (not too fast)
+- Speak at normal pace
 - Pause briefly between different pieces of information
-- Use the "Add Missing Info" feature for corrections
-
-## Design Philosophy
-
-### Why This UI?
-
-This application was specifically designed for **photographers who hate tech and writing captions**. Every decision was made to reduce friction:
-
-1. **No cognitive overload**: One clear action at a time
-2. **No learning curve**: Obvious buttons, clear flow
-3. **No technical jargon**: "Describe your photo" not "Audio input transcription"
-4. **No visual clutter**: Clean white space, focused content
-5. **No mistakes**: Smart detection of missing information
-
-### Visual Design
-
-- **Professional**: Thomson Reuters branding throughout
-- **Accessible**: Large touch targets, high contrast, clear hierarchy
-- **Responsive**: Works on desktop, tablet, and phone
-- **Fast**: Smooth animations, instant feedback
-- **Trustworthy**: Familiar Reuters visual language
+- Use "Add Missing Info" for corrections
 
 ## Technical Architecture
 
+### Native App Stack
+- **pywebview**: Native window wrapper (no browser)
+- **Python audio recording**: sounddevice library for microphone access
+- **Flask**: Backend API server
+- **JavaScript bridge**: Communication between Python and JavaScript
+
+### AI Models
+- **Whisper Large** (~1.5GB): Most accurate transcription, cached at `~/.cache/whisper/`
+- **Claude Sonnet 4.5**: Reuters caption generation via LiteLLM
+
 ### Frontend
-- **Vanilla JavaScript**: No framework overhead, fast and simple
-- **Progressive enhancement**: Works without JavaScript for basic functionality
-- **State machine**: Clean step management with `showStep()`
-- **Toast notifications**: Non-intrusive feedback (no alerts)
-- **Responsive CSS**: Mobile-first with breakpoints at 640px and 380px
+- **Vanilla JavaScript**: No framework overhead
+- **State machine**: Clean step management
+- **Toast notifications**: Non-intrusive feedback
+- **Responsive CSS**: Works on all screen sizes
 
 ### Backend
 - **Flask**: Lightweight Python web framework
-- **Whisper**: Local transcription (base model, ~1GB)
-- **Claude via Anthropic SDK**: Custom base_url for LiteLLM
-- **CORS enabled**: Supports local development
-- **Static file serving**: Direct serving of frontend assets
+- **Native audio recording**: Direct microphone access
+- **Whisper service**: Local transcription
+- **Claude service**: Reuters-style formatting with comprehensive prompt
 
 ### API Flow
 ```
-Browser → Record Audio → Blob
+Native Window → Python Audio Recording → WAV file
     ↓
-POST /api/upload-audio → Whisper Service → Transcription
+Whisper Large → Transcription
     ↓
-POST /api/generate-caption → Claude Service → Formatted Caption
+Claude Sonnet 4.5 (via LiteLLM) → Formatted Caption
 ```
 
 ### Context Chaining
-The app intelligently builds context across iterations:
+The app builds context across iterations:
 ```
 Round 1: "Original recording"
          ↓ + details A
@@ -276,108 +279,106 @@ Round 2: "Original recording + Additional details: A"
 Round 3: "Original recording + Additional details: A + B"
 ```
 
+## Sharing with Colleagues
+
+See `HOW_TO_SHARE.md` for detailed instructions.
+
+**Quick summary:**
+1. Zip the entire folder
+2. Send to colleague
+3. They follow `START_HERE.md` instructions
+4. API credentials automatically included (in `backend/.env`)
+
+## Background Photos
+
+The app features 9 rotating Reuters photos as backgrounds:
+- Rugby match
+- Arctic scene
+- German carnival
+- Lunar New Year celebrations (Indonesia, Russia, Thailand)
+- Olympics (ski jumping, snowboard)
+- Gaza coverage
+
+To add more:
+1. Add JPG files to `frontend/public/images/backgrounds/`
+2. Update `backgroundImages` array in `frontend/public/script.js`
+
 ## Troubleshooting
 
-### Microphone Issues
-- **Browser permission denied**: Check browser settings
-- **No audio detected**: Check system microphone settings
-- **Recording doesn't start**: Try refreshing the page
+### Setup Issues
+- **"Python not found"**: Install Python 3 from python.org
+- **Setup fails**: Make sure you have internet connection for downloads
+- **Permission denied (Mac)**: Right-click script → Open → Open anyway
 
-### Transcription Issues
-- **Inaccurate transcription**: Speak more clearly, reduce background noise
-- **Wrong language detected**: Specify language in recording
-- **Slow transcription**: Base model is ~1s per 10s of audio
+### App Issues
+- **Window doesn't open**: Check that setup completed successfully
+- **Microphone not working**: Grant microphone permissions in system settings
+- **Transcription slow**: Normal for Whisper Large (~2-3 seconds per 10s audio)
+- **Caption generation fails**: Check VPN connection to LiteLLM
 
-### Caption Generation Issues
-- **403 Forbidden**: Check API key, VPN connection
-- **Slow generation**: LiteLLM instance may be under load
-- **Server Error 500**: Port conflict - restart using `start.command` (auto-kills old servers)
-- **Missing information not showing**: Hard refresh browser (Cmd+Shift+R)
+### Common Fixes
+- **Port conflict**: Close window and reopen (auto-kills old servers)
+- **Whisper model missing**: Run setup script again
+- **API errors**: Verify `.env` file has correct credentials
 
-### Styling Issues
-- **Logo not loading**: Check `frontend/public/images/` directory
-- **Fonts not loading**: Check `frontend/public/fonts/` directory
-- **Colors wrong**: Hard refresh browser (Cmd+Shift+R / Ctrl+Shift+R)
+## Browser Compatibility (Dev Mode)
 
-## Browser Compatibility
-
-- ✅ Chrome 90+ (recommended)
+If running Flask directly (not via launcher):
+- ✅ Chrome 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
 - ✅ Edge 90+
-- ❌ Internet Explorer (not supported)
-
-**Features requiring modern browser:**
-- MediaRecorder API (audio recording)
-- Fetch API (backend communication)
-- CSS Grid & Flexbox (layout)
-- CSS Custom Properties (theming)
 
 ## Development Notes
 
-### Adding New Features
+### Key Files to Modify
 
-The wizard architecture makes it easy to add steps:
+**Change Reuters prompt:**
+- Edit `backend/claude_service.py` → `REUTERS_PROMPT_TEMPLATE`
 
-1. Add HTML section with `class="step"` and unique ID
-2. Add step to `showStep()` navigation array
-3. Add event listeners in `init()` function
-4. Use existing button styles and layouts for consistency
+**Change Whisper model:**
+- Edit `backend/whisper_service.py` → `WHISPER_MODEL` (or set in `.env`)
 
-### Modifying Branding
+**Change UI:**
+- `frontend/public/index.html` - Structure
+- `frontend/public/style.css` - Styling
+- `frontend/public/script.js` - Behavior
 
-All brand colors and fonts are defined in CSS custom properties at the top of `style.css`. To rebrand:
+**Add background photos:**
+- Add to `frontend/public/images/backgrounds/`
+- Update `backgroundImages` array in `script.js`
 
-1. Update `:root` variables (colors)
-2. Update `@font-face` declarations (fonts)
-3. Replace logo in `images/` directory
-4. Update favicon
+### Model Options
 
-### Backend Changes
-
-- Whisper model can be changed in `.env` (tiny/base/small/medium/large)
-- Claude prompt is in `claude_service.py` (`REUTERS_PROMPT_TEMPLATE`)
-- Port and logging configured in `.env`
-
-## Deployment Considerations
-
-**For internal Thomson Reuters deployment:**
-
-- Requires access to internal LiteLLM instance
-- VPN connection necessary for API access
-- SSL certificate recommended for production
-- Consider using Gunicorn/uWSGI instead of Flask dev server
-
-**Performance:**
-- Whisper transcription: ~1-2 seconds per 10 seconds of audio
-- Claude generation: ~3-5 seconds per caption
-- Total time: ~10-15 seconds for a complete workflow
+Whisper models available (change in `.env`):
+- `tiny` (~39MB) - Fastest, least accurate
+- `base` (~74MB) - Fast, good accuracy
+- `small` (~244MB) - Medium speed, better accuracy
+- `medium` (~769MB) - Slower, great accuracy
+- **`large` (~1.5GB)** - Slowest, best accuracy (current)
 
 ## Future Enhancements
 
-Potential improvements (not yet implemented):
-- Keyboard shortcuts (Space to record, Cmd+Enter to generate)
-- Dark mode toggle
+Potential improvements:
+- Electron packaging for true standalone .app
+- Keyboard shortcuts
 - Caption history/templates
 - Multi-language support
 - Batch processing
 - Export to various formats
 
-## License
-
-[Specify your license here]
-
 ## Credits & Acknowledgments
 
-- **OpenAI Whisper** - Fast, accurate audio transcription
+- **OpenAI Whisper Large** - Industry-leading audio transcription
 - **Anthropic Claude Sonnet 4.5** - Intelligent caption generation
 - **Thomson Reuters** - Brand guidelines and caption standards
 - **LiteLLM** - Unified API management
+- **pywebview** - Native window wrapper
 
 ## Support
 
-For issues, questions, or feature requests, please contact the development team or file an issue in the project repository.
+For issues, questions, or feature requests, contact the development team.
 
 ---
 
-**Built for Reuters photographers, by humans and Claude** 🤝
+**Built for Reuters photographers** 📸

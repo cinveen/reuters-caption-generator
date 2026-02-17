@@ -3,8 +3,8 @@
 # Reuters Caption Generator - Setup Script
 # Run this once to install everything needed
 
-# Get the directory where this script is located
-cd "$(dirname "$0")"
+# Change to parent directory (where backend/ folder is)
+cd "$(dirname "$0")/.."
 
 echo "================================================"
 echo "Reuters Caption Generator - Setup"

@@ -1,5 +1,6 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+# Change to parent directory (where launcher.py is)
+cd "$(dirname "$0")/.."
 
 # Kill any existing Flask servers to prevent conflicts
 lsof -ti:8000 | xargs kill -9 2>/dev/null

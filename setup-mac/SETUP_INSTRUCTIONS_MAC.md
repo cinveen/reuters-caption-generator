@@ -1,6 +1,6 @@
-# Reuters Caption Generator - Setup Instructions
+# Reuters Caption Generator - Setup Instructions (macOS)
 
-## For First-Time Users
+## For First-Time Users on Mac
 
 Hey! This is a simple app to help you create Reuters-style photo captions using voice recording.
 
@@ -13,7 +13,7 @@ You need **Python 3** installed on your Mac. If you don't have it:
 
 ### Setup (One Time Only)
 
-1. **Unzip the folder** you received to your Desktop or Documents
+1. **From the main folder, go to the `setup-mac` folder**
 2. **Double-click `setup.command`**
    - If you see a security warning, right-click → Open → Open anyway
    - Let it run (takes 5-10 minutes to download everything)
@@ -21,7 +21,7 @@ You need **Python 3** installed on your Mac. If you don't have it:
 
 ### Running the App
 
-1. **Double-click `start.command`**
+1. **Double-click `start.command` (in the setup-mac folder)**
 2. A window opens with the Reuters Caption Generator
 3. Start recording your photo descriptions!
 
@@ -47,4 +47,4 @@ You need **Python 3** installed on your Mac. If you don't have it:
 
 ### Need Help?
 
-Contact [your name/email] if you run into any issues!
+Contact your colleague who sent you this app if you run into any issues!
