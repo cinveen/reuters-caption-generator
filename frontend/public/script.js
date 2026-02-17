@@ -29,6 +29,28 @@ const loadingMessage = document.getElementById('loadingMessage');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toastMessage');
 
+// Random background image
+const backgroundImages = [
+    'images/backgrounds/rugby.jpg',
+    'images/backgrounds/arctic.jpg',
+    'images/backgrounds/carnival.jpg',
+    'images/backgrounds/lunar-indonesia.jpg',
+    'images/backgrounds/lunar-russia.jpg',
+    'images/backgrounds/lunar-thailand.jpg',
+    'images/backgrounds/olympics-skijumping.jpg',
+    'images/backgrounds/olympics-snowboard.jpg',
+    'images/backgrounds/gaza.jpg'
+];
+
+// Set random background on page load
+function setRandomBackground() {
+    const randomImage = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+    document.body.style.backgroundImage = `url('${randomImage}')`;
+}
+
+// Initialize background
+setRandomBackground();
+
 // Step sections
 const stepRecord = document.getElementById('stepRecord');
 const stepGenerate = document.getElementById('stepGenerate');
