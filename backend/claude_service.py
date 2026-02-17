@@ -107,7 +107,11 @@ IMPORTANT: Do not use any markdown formatting (no **, no *, no #, etc.). Use pla
 [Your reformatted caption here]
 
 **MISSING INFORMATION NEEDED:**
-- [List what information is missing for a complete Reuters caption]
+- [Phrase missing information as friendly questions to the photographer]
+- [Example: "What is the photographer's name?" instead of "Photographer name"]
+- [Example: "Can you provide the specific location?" instead of "Location details"]
+- [Example: "When was this photograph taken?" instead of "Date"]
+- [Informational notes like "No additional material needed" can remain as statements]
 
 ## CRITICAL RULES
 - Use ONLY information from the provided caption

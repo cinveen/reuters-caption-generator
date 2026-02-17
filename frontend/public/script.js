@@ -12,18 +12,15 @@ const generateButton = document.getElementById('generateButton');
 const transcriptionPreview = document.getElementById('transcriptionPreview');
 const formattedCaption = document.getElementById('formattedCaption');
 const copyButton = document.getElementById('copyButton');
-const addInfoButton = document.getElementById('addInfoButton');
 const startOverButton = document.getElementById('startOverButton');
+const showTypeButton = document.getElementById('showTypeButton');
 const missingInfoAlert = document.getElementById('missingInfoAlert');
 const missingInfoList = document.getElementById('missingInfoList');
 const recordAdditionalButton = document.getElementById('recordAdditionalButton');
 const stopAdditionalButton = document.getElementById('stopAdditionalButton');
 const additionalRecordingStatus = document.getElementById('additionalRecordingStatus');
-const additionalAudioPlayback = document.getElementById('additionalAudioPlayback');
 const additionalDetails = document.getElementById('additionalDetails');
 const updateButton = document.getElementById('updateButton');
-const cancelAddButton = document.getElementById('cancelAddButton');
-const missingInfoReminder = document.getElementById('missingInfoReminder');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const loadingMessage = document.getElementById('loadingMessage');
 const toast = document.getElementById('toast');
@@ -81,8 +78,8 @@ function init() {
     startOverButton.addEventListener('click', startOver);
     recordAdditionalButton.addEventListener('click', startAdditionalRecording);
     stopAdditionalButton.addEventListener('click', stopAdditionalRecording);
+    showTypeButton.addEventListener('click', toggleTypeSection);
     updateButton.addEventListener('click', updateCaption);
-    cancelAddButton.addEventListener('click', () => showStep('stepResult'));
 
     // Enable typing in additional details
     additionalDetails.addEventListener('input', () => {
@@ -145,12 +142,13 @@ async function stopRecording() {
 
         // Set the transcription
         currentTranscription = result.transcription;
-        transcriptionPreview.textContent = `"${truncate(currentTranscription, 150)}..."`;
 
-        hideLoading();
-        showStep('stepGenerate');
+        // Auto-generate caption immediately (skip preview step)
         recordButton.classList.remove('hidden');
         recordingStatus.textContent = '';
+
+        // Automatically generate caption
+        await generateCaption();
 
     } catch (error) {
         hideLoading();
@@ -164,7 +162,9 @@ async function stopRecording() {
 // Caption Generation
 async function generateCaption() {
     try {
-        showLoading('Generating caption...');
+        // Show different message if updating vs. initial generation
+        const isUpdate = formattedCaption.value.trim().length > 0;
+        showLoading(isUpdate ? 'Updating caption...' : 'Generating caption...');
 
         const transcriptionToUse = additionalDetails.value.trim()
             ? `${currentTranscription}\n\nAdditional details: ${additionalDetails.value.trim()}`
@@ -197,6 +197,7 @@ function displayCaption(data) {
     formattedCaption.value = data.formatted_caption || 'Could not generate caption.';
 
     // Handle missing information
+    const additionalDetailsSection = document.getElementById('additionalDetailsSection');
     if (data.missing_information && data.missing_information.length > 0) {
         storedMissingInfo = data.missing_information;
         missingInfoList.innerHTML = '';
@@ -206,10 +207,10 @@ function displayCaption(data) {
             missingInfoList.appendChild(li);
         });
         missingInfoAlert.classList.remove('hidden');
-        addInfoButton.classList.remove('hidden');
+        additionalDetailsSection.classList.remove('hidden');
     } else {
         missingInfoAlert.classList.add('hidden');
-        addInfoButton.classList.add('hidden');
+        additionalDetailsSection.classList.add('hidden');
     }
 }
 
@@ -250,15 +251,15 @@ async function stopAdditionalRecording() {
             throw new Error(result.error || 'Failed to process recording');
         }
 
-        const existing = additionalDetails.value.trim();
-        additionalDetails.value = existing
-            ? `${existing}\n\n${result.transcription}`
-            : result.transcription;
+        // Merge with current transcription
+        currentTranscription = currentTranscription + '\n\nAdditional details: ' + result.transcription;
 
-        updateButton.disabled = false;
+        // Reset UI
         recordAdditionalButton.classList.remove('hidden');
         additionalRecordingStatus.textContent = '';
-        hideLoading();
+
+        // Auto-generate updated caption
+        await generateCaption();
 
     } catch (error) {
         hideLoading();
@@ -266,6 +267,16 @@ async function stopAdditionalRecording() {
         recordAdditionalButton.classList.remove('hidden');
         additionalRecordingStatus.textContent = '';
         console.error('Stop additional recording error:', error);
+    }
+}
+
+// Toggle type section visibility
+function toggleTypeSection() {
+    const typeSection = document.getElementById('typeSection');
+    typeSection.classList.toggle('hidden');
+
+    if (!typeSection.classList.contains('hidden')) {
+        additionalDetails.focus();
     }
 }
 
@@ -278,6 +289,10 @@ function updateCaption() {
     // Merge additional details into the main transcription for next iteration
     currentTranscription = currentTranscription + '\n\nAdditional details: ' + additionalDetails.value.trim();
     additionalDetails.value = ''; // Clear for next round
+
+    // Hide type section after updating
+    const typeSection = document.getElementById('typeSection');
+    typeSection.classList.add('hidden');
 
     generateCaption();
 }
@@ -333,19 +348,5 @@ function truncate(str, maxLen) {
     return str.length > maxLen ? str.substring(0, maxLen) : str;
 }
 
-// Show missing info when entering add details step
-addInfoButton.addEventListener('click', () => {
-    if (storedMissingInfo.length > 0) {
-        missingInfoReminder.innerHTML = '<strong>Missing:</strong><ul>' +
-            storedMissingInfo.map(item => `<li>${item}</li>`).join('') +
-            '</ul>';
-    }
-
-    // Clear the textarea and audio for fresh input
-    additionalDetails.value = '';
-    additionalAudioPlayback.src = '';
-    additionalAudioPlayback.classList.add('hidden');
-    updateButton.disabled = true;
-
-    showStep('stepAddDetails');
-});
+// Additional details section is now inline on result page
+// No need for separate step navigation

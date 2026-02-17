@@ -64,6 +64,13 @@
                     <textarea id="formattedCaption" class="caption-text" readonly></textarea>
                 </div>
 
+                <div class="action-zone">
+                    <button id="copyButton" class="btn-secondary btn-large">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Caption</span>
+                    </button>
+                </div>
+
                 <div id="missingInfoAlert" class="alert-box hidden">
                     <div class="alert-content">
                         <strong>Missing Information:</strong>
@@ -71,16 +78,37 @@
                     </div>
                 </div>
 
-                <div class="action-zone action-zone-split">
-                    <button id="copyButton" class="btn-secondary btn-large">
-                        <i class="fas fa-copy"></i>
-                        <span>Copy Caption</span>
+                <!-- Additional Details Section (inline on result page) -->
+                <div id="additionalDetailsSection" class="hidden">
+                    <div class="action-zone" style="margin-bottom: 8px;">
+                        <button id="recordAdditionalButton" class="btn-primary btn-large">
+                            <i class="fas fa-microphone"></i>
+                            <span>Record Additional Details</span>
+                        </button>
+
+                        <button id="stopAdditionalButton" class="btn-danger btn-large hidden">
+                            <i class="fas fa-stop"></i>
+                            <span>Stop Recording</span>
+                        </button>
+
+                        <div id="additionalRecordingStatus" class="status-text"></div>
+                    </div>
+
+                    <button id="showTypeButton" class="btn-text" style="margin-top: 0;">
+                        <i class="fas fa-keyboard"></i>
+                        Or Type Here
                     </button>
 
-                    <button id="addInfoButton" class="btn-outline btn-large">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>Add Missing Info</span>
-                    </button>
+                    <div id="typeSection" class="hidden">
+                        <textarea id="additionalDetails" class="details-input" placeholder="Type additional information here..."></textarea>
+
+                        <div class="action-zone">
+                            <button id="updateButton" class="btn-primary btn-large">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Update Caption</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <button id="startOverButton" class="btn-text">

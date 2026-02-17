@@ -42,25 +42,30 @@ Built specifically for photographers who need fast, accurate caption generation 
 ## User Experience Flow
 
 ```
-1. RECORD
-   ↓ Click big "Start Recording" button
+1. RECORD & GENERATE
+   ↓ Click "Start Recording" button
    ↓ Speak your description
-   ↓ Click "Stop"
+   ↓ Click "Stop Recording"
+   ↓ Auto-generates caption immediately (no preview step!)
 
-2. GENERATE
-   ↓ See preview of what was transcribed
-   ↓ Click "Generate Reuters Caption"
+2. REVIEW & COPY
+   ↓ Your caption appears with Copy button
+   ↓ Missing info shown as friendly questions (if any)
+   ↓ Click "Copy Caption" (done!)
 
-3. REVIEW
-   ↓ Your caption appears
-   ↓ Missing info highlighted (if any)
-   ↓ Click "Copy Caption" (done!) or "Add Missing Info"
-
-4. REFINE (optional, repeatable)
-   ↓ Record OR type additional details
-   ↓ Click "Update Caption"
-   ↓ Return to step 3 (builds on previous context)
+3. REFINE (optional, inline, repeatable)
+   ↓ Click "Record Additional Details" to record more
+   ↓ OR click "Or Type Here" to reveal text box
+   ↓ Auto-updates caption on stop (or click Update after typing)
+   ↓ Everything stays on same page - no navigation needed!
 ```
+
+**Key improvements:**
+- ⚡ Faster workflow - no preview step, auto-generates
+- 📋 Copy button right below caption
+- ❓ Missing info phrased as friendly questions
+- 🎤 Inline recording/typing - no page switching
+- 🔄 Smart loading messages ("Generating..." vs "Updating...")
 
 ## Project Structure
 
@@ -194,7 +199,7 @@ python launcher.py
 
 ### For Photographers
 
-**Step 1: Record Your Description**
+**Step 1: Record & Auto-Generate**
 - Click the large "Start Recording" button
 - Speak naturally about your photo:
   - Who is in the photo (names, titles)
@@ -203,23 +208,21 @@ python launcher.py
   - When it was taken (date, time context)
   - Why it's newsworthy (context, significance)
 - Click "Stop Recording" when finished
+- **Caption generates automatically** - no extra clicks!
 
-**Step 2: Generate Caption**
-- Review the transcription preview
-- Click "Generate Reuters Caption"
-- Claude analyzes and formats using comprehensive Reuters style guide
-
-**Step 3: Review & Copy**
-- Your formatted caption appears
-- Missing information is highlighted
+**Step 2: Review & Copy**
+- Your formatted caption appears immediately
+- Copy button right below caption
+- Missing information shown as friendly questions (if any)
 - Click "Copy Caption" to copy to clipboard
-- Or click "Add Missing Info" to refine...
+- Done! Or continue to step 3 to refine...
 
-**Step 4: Refine (Optional, Repeatable)**
-- Record OR type additional details
-- Click "Update Caption"
+**Step 3: Refine (Optional, Inline, Repeatable)**
+- **Record more:** Click "Record Additional Details" → record → auto-updates
+- **OR Type:** Click "Or Type Here" → text box appears → type → click "Update Caption"
+- Everything happens on the same page - no navigation!
 - New caption builds on ALL previous information
-- Repeat until perfect
+- Repeat as many times as needed
 
 ### Best Practices
 
