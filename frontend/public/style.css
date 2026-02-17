@@ -364,6 +364,42 @@ button i {
     color: var(--tr-orange);
 }
 
+/* Info List (for changes made) */
+.info-list {
+    list-style: none;
+    padding: 0;
+}
+
+.info-list li {
+    padding: 6px 0;
+    color: var(--tr-racing-green);
+}
+
+.info-list li:before {
+    content: "✓ ";
+    font-weight: bold;
+    margin-right: 8px;
+    color: var(--tr-racing-green);
+}
+
+/* Keywords List */
+.keywords-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.keywords-list li {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--tr-racing-green);
+    color: var(--tr-white);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
 /* Info Box */
 .info-box {
     background: var(--tr-white);

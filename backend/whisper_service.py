@@ -21,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Get Whisper model size from environment variables
-WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
+WHISPER_MODEL = os.getenv("WHISPER_MODEL", "large")
 
 # Initialize Whisper model (lazy loading - will only load when first used)
 _model = None
