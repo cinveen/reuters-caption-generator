@@ -6,6 +6,7 @@ python-dotenv==1.0.0
 # Audio processing
 pydub==0.25.1
 SpeechRecognition==3.10.0
+soundfile
 
 # Whisper for transcription
 openai-whisper
@@ -13,7 +14,8 @@ torch
 numpy
 sounddevice
 
-# LiteLLM for Claude integration
+# LiteLLM and Anthropic for Claude integration
+anthropic
 litellm==1.12.1
 requests==2.31.0
 
